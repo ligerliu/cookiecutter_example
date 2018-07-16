@@ -1,17 +1,5 @@
-import os
-import glob
 import numpy as np
-import matplotlib.pyplot as plt
-import time
-import scipy.io as sio
-import multiprocessing
-from scipy import misc
-import scipy.io as sio
 
-PATH_TO_SAVE = '/Users/jiliangliu/Downloads/for_jiliang/gisaxs_image/'
-os.chdir('/Users/jiliangliu/Dropbox/gisaxs_sim')
-#I make SLD, SLDS =0, reflc, trans = 1, current condition only pattern shift count, we could try whether GAN could work on this or not then continue include more distortion
-# SLD corresponds to the SLD of film
 def GISAXS_constrcution(SAXS,
                         incident_angle,
                         SLD,
@@ -35,7 +23,9 @@ def GISAXS_constrcution(SAXS,
     q_reflc: q for reflectivity and transmission curve, 1D numpy.array
     qz: q for detector space in vertical direction, 1D numpy.array
     Qz: q for reciprocal space of SAXS in vertical direction, 1D numpy.array
-    wavelength: wavelength of incident X-ray, float 
+    wavelength: wavelength of incident X-ray, float
+    ------------
+    output GISAXS pattern, 2D numpy array 
     "
     incident_anlge = np.radians(incident_angle)
     ct_f = np.degrees(np.arcsin(wavelength*np.sqrt(16*np.pi*SLD)/4/np.pi))#0.0928039405254*.9
@@ -93,90 +83,136 @@ def GISAXS_constrcution(SAXS,
         TR[i,:] = t_f**2*reflc_params[i]**2*SAXS[r_index.astype(int),:]
         RT[i,:] = trans_params[i]**2*r_f**2*SAXS[r_index.astype(int),:]
         RR[i,:] = r_f**2*reflc_params[i]**2*SAXS[d_index.astype(int),:]
-    return im_GISAXS,TT,TR,RT,RR,horizon_qz_index,qz_f,reflc_params,trans_params
+    return im_GISAXS
 
 
-# SLDS corresponds to the SLD of substrate
-def GISAXS_full(SAXS,GISAXS,alpha_incident,
-				SLD,SLDS,qz,wavelength,
-				beamcenter_y,detector_distance,
-				pixel_size,scale_factor=5):
-    im_2 = np.zeros(np.shape(SAXS))
-    #im_2 = np.zeros((256,256))
-    im_2[:GISAXS.shape[0],:] = np.flipud(GISAXS)
+def GISAXS_full(SAXS,
+                GISAXS,
+                incident_angle,
+                SLD,
+                SLDS,
+                qz,
+                wavelength,
+                beamcenter_y,
+                detector_distance,
+                pixel_size,
+                scale_factor=10):
+    "
+    Computer a GISAXS pattern include the GTSAXS pattern；
+    GTSAXS pattern is SAXS pattern with refraction dsitortion and 
+    intensity of GTSAXS is scale down by scale factor.
+    --------------
+    SAXS: 2D image, numpy array;
+    GISAXS: 2D image, numpy array;
+    incident_angle:incident angle of X-ray, degrees;
+    SLD: scattering length density of film;
+    SLDS: scattering length density of substrate;
+    qz: q of vertical detector space; 1/Angstrom;
+    wavelength: wave length of incident X-ray
+    beamcenter_y: beam center at vertical detector space, pixel;
+    detector_distance: sample to detector distance, meter;
+    pixel_size: meter;
+    scale_factor: constant, the factor scale down SAXS to simulate GTSAXS.
+    --------------
+    output: GISAXS and correlated GTSAXS; 2D numpy array
+    "
+    im_full = np.zeros(np.shape(SAXS))
+    im_full[:GISAXS.shape[0],:] = np.flipud(GISAXS)
     
     k0 = 2*np.pi/wavelength
     ct_f = np.degrees(np.arcsin(wavelength*np.sqrt(16*np.pi*SLD)/4/np.pi))
     ct_si = np.degrees(np.arcsin(wavelength*np.sqrt(16*np.pi*SLDS)/4/np.pi))
     qz_cr = np.copy(qz)
-    alpha_incident = np.radians(alpha_incident)
-    theta = np.round(2*np.sin(alpha_incident/2)*detector_distance/(pixel_size)).astype(int)
+    incident_angle = np.radians(incident_angle)
+    #theta correlate the pixel position of horizon, below horizon is GTSAXS; above is GISAXS
+    theta = np.round(2*np.sin(incident_angle/2)*detector_distance/(pixel_size)).astype(int)
     
-    # GISAXS
-    if alpha_incident <= np.radians(ct_f):
-        qz_cr[:beamcenter_y-theta] = k0*(np.sqrt((qz[:beamcenter_y-theta]/k0-np.sin(alpha_incident))**2-np.sin(alpha_incident)**2))
+    #refraction correction of qz for GISAXS and GTSAXS had been calculated basing on paper: 
+    #Lu, X. et al., J. of Appl. Cryst.2013.doi: 10.1107/S0021889812047887
+    
+    # GISAXS qz refraction correction
+    if incident_angle <= np.radians(ct_f):
+        qz_cr[:beamcenter_y-theta] = k0*(np.sqrt((qz[:beamcenter_y-theta]/k0-\
+                                     np.sin(incident_angle))**2-np.sin(incident_angle)**2))
     else:
-        qz_cr[:beamcenter_y-theta] = k0*(np.sqrt((np.sin(alpha_incident)**2-np.sin(ct_f*np.pi/180)**2))+\
-                                    	np.sqrt((qz[:beamcenter_y-theta]/k0-np.sin(alpha_incident))**2-\
-										np.sin(ct_f*np.pi/180)**2))
-    # GTSXAS
+        qz_cr[:beamcenter_y-theta] = k0*(np.sqrt((np.sin(incident_angle)**2-np.sin(ct_f*np.pi/180)**2))+\
+                                     np.sqrt((qz[:beamcenter_y-theta]/k0-np.sin(incident_angle))**2-\
+                                     np.sin(ct_f*np.pi/180)**2))
+    # GTSXAS qz refraction correction
     if alpha_incident <= np.radians(ct_f):
-        qz_cr[beamcenter_y-theta:] = k0*(-np.sqrt((qz[beamcenter_y-theta:]/k0-np.sin(alpha_incident))**2-\
-										np.sin(alpha_incident)**2+np.sin(ct_si*np.pi/180)**2))
+        qz_cr[beamcenter_y-theta:] = k0*(-np.sqrt((qz[beamcenter_y-theta:]/k0-np.sin(incident_angle))**2-\
+									 np.sin(incident_angle)**2+np.sin(ct_si*np.pi/180)**2))
     else:    
-        qz_cr[beamcenter_y-theta:] = k0*(np.sqrt((np.sin(alpha_incident)**2-np.sin(ct_f*np.pi/180)**2))-\
-      									np.sqrt((qz[beamcenter_y-theta:]/k0-np.sin(alpha_incident))**2-\
-										np.sin(ct_f*np.pi/180)**2+np.sin(ct_si*np.pi/180)**2))
+        qz_cr[beamcenter_y-theta:] = k0*(np.sqrt((np.sin(incident_angle)**2-np.sin(ct_f*np.pi/180)**2))-\
+                                     np.sqrt((qz[beamcenter_y-theta:]/k0-np.sin(incident_angle))**2-\
+                                     np.sin(ct_f*np.pi/180)**2+np.sin(ct_si*np.pi/180)**2))
     
     for i in range(int(beamcenter_y-theta),len(qz)):
-        im_2[i,:] = SAXS[np.argmin(np.abs(qz[i]-qz)).astype(int),:]/scale_factor
+        im_full[i,:] = SAXS[np.argmin(np.abs(qz[i]-qz)).astype(int),:]/scale_factor
     
-    im_2[np.isnan(im_2)]=0.01
-    return im_2#[:256,:]
+    im_full[np.isnan(im_2)]=0.01
+    return im_full
 
 
-def convert_one_image(im_name,detector_distance,wavelength,
-						beamcenter_y,beamcenter_x,reflc, q_reflc, 
-						SLD, SLDS, trans_index, pixel_size,
-						alpha_incident=0.18,plot_im=False, save_plot=True):
-    im = im_name
+def convert_saxs2gisaxs(SAXS,
+                        detector_distance,
+                        wavelength,
+						beamcenter_y,
+                        reflectivity,
+                        transimission, 
+                        q_reflc, 
+						SLD, 
+                        SLDS,
+                        pixel_size,
+						incident_anglie
+                        scale_factor):
+    
+    "
+    Computer a GISAXS pattern include the GTSAXS pattern；
+    this converter function will calcualte the qz and collibrate the SAXS for GISAXS
+    --------------
+    SAXS: 2D image, numpy array;
+    detector_distance: sample to detector distance;
+    wavelength: wave length of incident X-ray;
+    beamcenter_y: beam center at vertical detector space, pixel;
+    reflectivity: reflectivity curve, 1D numpy.array;
+    transimission: transmission curve, 1D numpy.array;
+    q_reflc: q for reflectivity and transmission curve, 1D numpy.array;
+    SLD: scattering length density of film;
+    SLDS: scattering length density of substrate;
+    pixel_size: meter;
+    incident_angle:incident angle of X-ray, degrees;
+    scale_factor: constant, the factor scale down SAXS to simulate GTSAXS.
+    --------------
+    output: GISAXS and correlated GTSAXS; 2D numpy array
+    "
     if beamcenter_y < im.shape[0]/2:  
-        im = np.flipud(im)#/np.min(im))
+        im = np.flipud(im)
         beamcenter_y = im.shape[0] - beamcenter_y
-    #im here corresponds to the SAXS pattern, the example has beam center at upper portion of image, ths I flip image, 
-    #it better to put center in the center of image or lower part of image
-    #set alpha_incident from 0.12, 0.14, 0.16, 0.18, 0.20 then one SAXS will pair with five GISAXS see GAN could figure out the shift in GISAXS
-    # detector_distance = f['attributes']['sample_det_distance']['value'].value
-    # wavelength = f['attributes']['wavelength']['value'].value
-    # beamcenter_y = f['attributes']['shape']['item000'].value-f['attributes']['beamy0']['value'].value
-    # beamcenter_x = f['attributes']['beamx0']['value'].value
-    ##
-    #beamcenter_y,beamcenter_y corresponds to the pixel posisiton of diffraction pattern. should be able to know in SAXS generator
-    #wavelength,deteector_distance,alpha_incident should be known as experiment parameters, may set detector distance to 5, wavelength 0.9184,
-    #set different alpha incident, then could pair one SAXS pattern to several GISAXS pattern.
     qz = 2*np.pi*2*np.sin(np.arcsin((beamcenter_y-np.arange(0,im.shape[0],1))*\
 		pixel_size/detector_distance)/2)/wavelength
-    #qz calculation is ycenter and SAXS row number correlate image shape[0]–f['attributes']['shape']['item000']
-    #qx = 2*np.pi*2*np.sin(np.arcsin((beamcenter_x-np.arange(0,im.shape[1],1))*75*1e-6/detector_distance)/2)/wavelength
-    #same for column direction
-    # os.chdir('/Volumes/NO NAME/GISAXS_reconstruction_function/without_fringe')
 
-    # reflc = np.ones((len(reflc),)) 
-    # trans_index = np.ones((len(trans_index),))
-    # SLD = 0
+    im_GISAXS  = GISAXS_constrcution(SAXS=SAX,
+                                     incident_angle=incident_angle,
+                                     SLD=SLD,
+                                     reflectivity=reflectivity,
+                                     transmission=transimission,
+                                     q_reflc=q_reflc,
+                                     qz=qz,
+                                     Qz=qz,
+                                     wavelength=wavelength)                            
 
-    im_GISAXS,TT,TR,RT,RR,horizon_qz_index,\
-    qz_f,reflc_params,trans_params = GISAXS_constrcution(SAXS=im,\
-                            incident_angle=alpha_incident,SLD=SLD,\
-                            reflectivity=reflc,transmission=trans_index,q_reflc=q_reflc,\
-                            qz=qz,Qz=qz,wavelength=wavelength, reflc=reflc, trans_index=trans_index)                            
+    SLDS = SLDS
 
-    SLDS = SLDS#30*1e-6
-
-    im_full = GISAXS_full(SAXS=im,GISAXS=im_GISAXS,alpha_incident=alpha_incident,
-						SLD=SLD,SLDS=SLDS,
-                    	qz=qz,wavelength=wavelength,
-						beamcenter_y=beamcenter_y,
-						detector_distance=detector_distance, 
-						pixel_size=pixel_size,scale_factor=50)
-    return im_full,qz_f,reflc_params,trans_params
+    im_full = GISAXS_full(SAXS=SAXS,
+                          GISAXS=im_GISAXS,
+                          incident_angle=incident_angle,
+                          SLD=SLD,
+                          SLDS=SLDS,
+                          qz=qz,
+                          wavelength=wavelength,
+                          beamcenter_y=beamcenter_y,
+                          detector_distance=detector_distance, 
+                          pixel_size=pixel_size,
+                          scale_factor=10)
+    return im_full
