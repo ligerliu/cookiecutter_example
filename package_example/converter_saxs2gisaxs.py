@@ -12,21 +12,33 @@ def gisaxs_construction(SAXS,
                         wavelength):
     """
     Computer the GISAXS pattern from SAXS pattern using DWBA
+    
     See http://gisaxs.com/index.php/DWBA
+    
     Parameters
-    -----------
-    SAXS: small angle scattering pattern 2D image, numpy.array
-    incident_angle: Incident angle in degrees, float
-    SLD: Scattering Length Density, float, parameter determine critical angle
-         usually in scale x1e-6
-    reflectivity: reflectivity curve, 1D numpy.array
-    transimission: transmission curve, 1D numpy.array
-    q_reflc: q for reflectivity and transmission curve, 1D numpy.array
-    qz: q for detector space in vertical direction, 1D numpy.array
-    Qz: q for reciprocal space of SAXS in vertical direction, 1D numpy.array
-    wavelength: wavelength of incident X-ray, float
-    ------------
-    output GISAXS pattern, 2D numpy array
+    ----------
+    SAXS: 2D numpy array
+          small angle scattering pattern 2D image.
+    incident_angle: float
+          Incident angle in degrees.
+    SLD:  float
+          Scattering Length Density,
+          parameter determine critical angle,
+          usually in scale x1e-6
+    reflectivity:  1D numpy.array
+    transmission: 1D numpy.array
+    q_reflc: 1D numpy.array
+             q for reflectivity and transmission.
+    qz: 1D numpy array
+        q for detector space in vertical direction.
+    Qz: 1D numpy array
+        q for reciprocal space of SAXS in vertical direction.
+    wavelength: float
+        wavelength of incident X-ray.
+    
+    Return 
+    ------
+    GISAXS pattern: 2D numpy array
     """
     incident_anlge = np.radians(incident_angle)
     ct_f = np.degrees(np.arcsin(wavelength*np.sqrt(16*np.pi*SLD)/4/np.pi))
@@ -44,9 +56,9 @@ def gisaxs_construction(SAXS,
 #   two theta angle in rciprocal space, radians
     alpha_incident_eff = np.arccos(np.cos(incident_anlge)*ambient_n/film_n)
 #   correct incident angle distortion due to refraction
-    r_f = reflctivity[np.nanargmin(np.abs(q_reflc-2*k0*np.sin(alpha_incident_eff)))]
+    r_f = reflectivity[np.nanargmin(np.abs(q_reflc-2*k0*np.sin(alpha_incident_eff)))]
     
-    t_f = transimission[np.nanargmin(np.abs(q_reflc-2*k0*np.sin(alpha_incident_eff)))]
+    t_f = transmission[np.nanargmin(np.abs(q_reflc-2*k0*np.sin(alpha_incident_eff)))]
         
     two_theta_r = np.arccos(np.cos(two_theta-incident_anlge) * \
                   ambient_n/film_n)-alpha_incident_eff
@@ -104,20 +116,32 @@ def gisaxs_full(SAXS,
     Computer a GISAXS pattern include the GTSAXS pattern；
     GTSAXS pattern is SAXS pattern with refraction dsitortion and 
     intensity of GTSAXS is scale down by scale factor.
-    --------------
-    SAXS: 2D image, numpy array;
-    GISAXS: 2D image, numpy array;
-    incident_angle:incident angle of X-ray, degrees;
-    SLD: scattering length density of film;
-    SLDS: scattering length density of substrate;
-    qz: q of vertical detector space; 1/Angstrom;
-    wavelength: wave length of incident X-ray
-    beamcenter_y: beam center at vertical detector space, pixel;
-    detector_distance: sample to detector distance, meter;
-    pixel_size: meter;
-    scale_factor: constant, the factor scale down SAXS to simulate GTSAXS.
-    --------------
-    output: GISAXS and correlated GTSAXS; 2D numpy array
+    
+    Parameters
+    ----------
+    SAXS:   2D numpy array;
+    GISAXS: 2D numpy array;
+    incident_angle: float
+            incident angle of X-ray, degrees;
+    SLD:  float
+          scattering length density of film;
+    SLDS: float
+          scattering length density of substrate;
+    qz: float
+        q of vertical detector space; 1/Angstrom;
+    wavelength: float
+        wave length of incident X-ray
+    beamcenter_y: int
+        beam center at vertical detector space, pixel;
+    detector_distance: float
+        sample to detector distance, meter.
+    pixel_size: float, meter.
+    scale_factor: int 
+        the factor scale down SAXS to simulate GTSAXS.
+    
+    Return 
+    -------
+    GISAXS and correlated GTSAXS; 2D numpy array
     """
     im_full = np.zeros(np.shape(SAXS))
     im_full[:GISAXS.shape[0],:] = np.flipud(GISAXS)
@@ -149,7 +173,7 @@ def gisaxs_full(SAXS,
                                      k0-np.sin(incident_angle))**2-\
 									 np.sin(incident_angle)**2+np.sin(ct_si*np.pi/180)**2))
     else:    
-        qz_cr[beamcenter_y-theta:] = k0*(np.sqrt((np.sin(incident_angle)**2 - \ 
+        qz_cr[beamcenter_y-theta:] = k0*(np.sqrt((np.sin(incident_angle)**2 - \
                                      np.sin(ct_f*np.pi/180)**2))-\
                                      np.sqrt((qz[beamcenter_y-theta:] / \
                                      k0-np.sin(incident_angle))**2-\
@@ -159,7 +183,7 @@ def gisaxs_full(SAXS,
         im_full[i,:] = SAXS[np.argmin(np.abs(qz[i]-qz)).astype(int), :]/\
                        scale_factor
     
-    im_full[np.isnan(im_2)]=0.01
+    im_full[np.isnan(im_full)]=0.01
     return im_full
 
 
@@ -168,7 +192,7 @@ def convert_saxs2gisaxs(SAXS,
                         wavelength,
                         beamcenter_y,
                         reflectivity,
-                        transimission, 
+                        transmission, 
                         q_reflc, 
 						SLD, 
                         SLDS,
@@ -180,33 +204,47 @@ def convert_saxs2gisaxs(SAXS,
     Computer a GISAXS pattern include the GTSAXS pattern；
     this converter function will calcualte the qz and collibrate the SAXS 
     for GISAXS
-    --------------
-    SAXS: 2D image, numpy array;
-    detector_distance: sample to detector distance;
-    wavelength: wave length of incident X-ray;
-    beamcenter_y: beam center at vertical detector space, pixel;
-    reflectivity: reflectivity curve, 1D numpy.array;
-    transimission: transmission curve, 1D numpy.array;
-    q_reflc: q for reflectivity and transmission curve, 1D numpy.array;
-    SLD: scattering length density of film;
-    SLDS: scattering length density of substrate;
-    pixel_size: meter;
-    incident_angle:incident angle of X-ray, degrees;
-    scale_factor: constant, the factor scale down SAXS to simulate GTSAXS.
-    --------------
+    
+    Parameters
+    ----------
+    SAXS: 2D numpy array;
+    detector_distance : float
+          sample to detector distance;
+    wavelength : float
+          wave length of incident X-ray;
+    beamcenter_y : int
+          beam center at vertical detector space, pixel;
+    reflectivity :  1D numpy.array
+    transmission : 1D numpy.array
+    q_reflc : 1D numpy array
+         q for reflectivity and transmission curve;
+    SLD : float
+         scattering length density of film;
+    SLDS : float
+         scattering length density of substrate;
+    pixel_size : float
+         meter;
+    incident_angle :float
+         incident angle of X-ray, degrees;
+    scale_factor : int
+         the factor scale down SAXS to simulate GTSAXS.
+    
+    Returns
+    -------
     output: GISAXS and correlated GTSAXS; 2D numpy array
     """
+    im = SAXS
     if beamcenter_y < im.shape[0]/2:  
         im = np.flipud(im)
         beamcenter_y = im.shape[0] - beamcenter_y
     qz = 2*np.pi*2*np.sin(np.arcsin((beamcenter_y-\
          np.arange(0, im.shape[0],1))*\
          pixel_size/detector_distance)/2)/wavelength
-    im_GISAXS  = gisaxs_construction(SAXS=SAX,
+    im_GISAXS  = gisaxs_construction(SAXS=SAXS,
                                      incident_angle=incident_angle,
                                      SLD=SLD,
                                      reflectivity=reflectivity,
-                                     transmission=transimission,
+                                     transmission=transmission,
                                      q_reflc=q_reflc,
                                      qz=qz,
                                      Qz=qz,
@@ -214,7 +252,7 @@ def convert_saxs2gisaxs(SAXS,
     
     SLDS = SLDS
     
-    im_full = gisax_full(SAXS=SAXS,
+    im_full = gisaxs_full(SAXS=SAXS,
                           GISAXS=im_GISAXS,
                           incident_angle=incident_angle,
                           SLD=SLD,
