@@ -24,3 +24,5 @@ script:
   #- flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
   - set -e
   - make -C docs html
+  - pip install doctr
+  - doctr deploy --built-docs /Users/jiliangliu/package_example/docs/build/html/ --deploy-repo ligerliu/package_example/
