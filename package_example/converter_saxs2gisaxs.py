@@ -36,9 +36,10 @@ def gisaxs_construction(SAXS,
     wavelength: float
         wavelength of incident X-ray.
     
-    Return 
-    ------
+    Returns
+    --------
     GISAXS pattern: 2D numpy array
+        GISAXS only, theoritically below critical angle of material no scattering.
     """
     incident_anlge = np.radians(incident_angle)
     ct_f = np.degrees(np.arcsin(wavelength*np.sqrt(16*np.pi*SLD)/4/np.pi))
@@ -139,9 +140,10 @@ def gisaxs_full(SAXS,
     scale_factor: int 
         the factor scale down SAXS to simulate GTSAXS.
     
-    Return 
+    Returns
     -------
-    GISAXS and correlated GTSAXS; 2D numpy array
+    GISAXS: 2D numpy array
+        including GISAXS and GTSAXS
     """
     im_full = np.zeros(np.shape(SAXS))
     im_full[:GISAXS.shape[0],:] = np.flipud(GISAXS)
@@ -207,31 +209,35 @@ def convert_saxs2gisaxs(SAXS,
     
     Parameters
     ----------
-    SAXS: 2D numpy array;
-    detector_distance : float
-          sample to detector distance;
-    wavelength : float
-          wave length of incident X-ray;
-    beamcenter_y : int
-          beam center at vertical detector space, pixel;
+    SAXS:  2D numpy array
+         Small Angle Xray Scattering pattern
+    detector_distance :  float
+         sample to detector distance
+    wavelength :  float
+         wave length of incident X-ray
+    beamcenter_y :  int
+         beam center at vertical detector space, pixel;
     reflectivity :  1D numpy.array
-    transmission : 1D numpy.array
+         reflectivity coefficient of material
+    transmission :  1D numpy.array
+         transmission coefficient of material
     q_reflc : 1D numpy array
          q for reflectivity and transmission curve;
     SLD : float
-         scattering length density of film;
+         scattering length density of film
     SLDS : float
-         scattering length density of substrate;
-    pixel_size : float
-         meter;
-    incident_angle :float
-         incident angle of X-ray, degrees;
-    scale_factor : int
-         the factor scale down SAXS to simulate GTSAXS.
+         scattering length density of substrate
+    pixel_size :  float
+         actual pixel size of detector, in meter
+    incident_angle :  float
+         incident angle of X-ray, degrees
+    scale_factor :  int
+         the factor scale down SAXS to simulate GTSAXS
     
     Returns
     -------
-    output: GISAXS and correlated GTSAXS; 2D numpy array
+    GISAXS pattern :  2D numpy.array
+         including GISAXS and correlated GTSAXS
     """
     im = SAXS
     if beamcenter_y < im.shape[0]/2:  
@@ -262,5 +268,5 @@ def convert_saxs2gisaxs(SAXS,
                           beamcenter_y=beamcenter_y,
                           detector_distance=detector_distance,
                           pixel_size=pixel_size,
-                          scale_factor=10)
+                          scale_factor=scale_factor)
     return im_full
