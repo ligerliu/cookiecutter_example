@@ -25,4 +25,4 @@ script:
   - set -e
   - make -C docs html
   - pip install doctr
-  - doctr deploy --built-docs /Users/jiliangliu/package_example/docs/build/html/ --deploy-repo ligerliu/package_example /Users/jiliangliu/package_example/
+  - doctr deploy --built-docs /Users/jiliangliu/package_example/docs/build/html/index.html --deploy-repo ligerliu/package_example /Users/jiliangliu/package_example/
