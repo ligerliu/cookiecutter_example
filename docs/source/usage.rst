@@ -50,9 +50,8 @@ Example
 
 Plots
 ------------------------
-.. plot::
+.. plot:: 
    
-      
    import numpy as np
    import os 
    
@@ -87,4 +86,4 @@ Plots
    fig,ax = plt.subplots(1,2)
    ax[0].imshow(np.log(saxs),vmin=1,vmax=12)
    ax[1].imshow(np.log(gisaxs),vmin=1,vmax=12)
-   
+
