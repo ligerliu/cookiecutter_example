@@ -21,8 +21,10 @@ Example
    
    import numpy as np
    from pkg_resources import resource_filename
+   import package_example
    
-   a = np.load(resource_filename('example_data/example_data.npz'))
+   filename = resource_filename(__name__,'example_data/example_data.npz') 
+   a = np.load(filename)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']
@@ -52,8 +54,10 @@ Plots
    
    import numpy as np
    from pkg_resources import resource_filename
+   import package_example
    
-   a = np.load(resource_filename('example_data/example_data.npz'))
+   filename = resource_filename(__name__,'example_data/example_data.npz')
+   a = np.load(filename)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']

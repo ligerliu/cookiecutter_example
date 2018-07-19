@@ -2,6 +2,7 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include LICENSE
 include README.rst
+include example_data/example_data.npz
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
@@ -13,5 +14,3 @@ include package_example/_version.py
 
 # If including data files in the package, add them like:
 # include path/to/data_file
-
-include example_data/example_data.npz
