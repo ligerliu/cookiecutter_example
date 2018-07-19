@@ -20,11 +20,9 @@ Example
 .. ipython:: python
    
    import numpy as np
-   import os
+   from pkg_resources import resource_filename
    
-   path = '/Users/jiliangliu/Downloads/for_jl/ori/'
-   os.chdir(path)
-   a = np.load('example_data.npz')
+   a = np.load(resource_filename('example_data/example_data.npz'))
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']
@@ -53,11 +51,9 @@ Plots
 .. plot:: 
    
    import numpy as np
-   import os 
+   from pkg_resources import resource_filename
    
-   path = '/Users/jiliangliu/Downloads/for_jl/ori/'
-   os.chdir(path)
-   a = np.load('example_data.npz')
+   a = np.load(resource_filename('example_data/example_data.npz'))
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']
