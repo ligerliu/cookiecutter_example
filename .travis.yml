@@ -25,11 +25,11 @@ script:
   - flake8 --max-line-length=315  # Enforce code style (but relax line length limit a bit).
   - make -C docs html  # Build the documentation.
   - pip install doctr
+<<<<<<< HEAD
   - dotr deploy --built-docs docs/build/html .
 =======
   #- flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
   - set -e
   - make -C docs html
   - pip install doctr
-  - doctr deploy --built-docs /Users/jiliangliu/package_example/docs/build/html/index.html --deploy-repo ligerliu/package_example /Users/jiliangliu/package_example/
->>>>>>> gisaxs-converter-function
+  - doctr deploy --built-docs docs/build/html .
