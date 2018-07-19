@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>package_example.converter_saxs2gisaxs &mdash; package_example 0.post41+g31c8e7c documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.rawgit.com/choldgraf/sphinx-copybutton/master/_static/copybutton.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> package_example
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.post41+g31c8e7c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">package_example</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>package_example.converter_saxs2gisaxs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for package_example.converter_saxs2gisaxs</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="gisaxs_construction"><a class="viewcode-back" href="../../usage.html#package_example.converter_saxs2gisaxs.gisaxs_construction">[docs]</a><span class="k">def</span> <span class="nf">gisaxs_construction</span><span class="p">(</span><span class="n">SAXS</span><span class="p">,</span>
+                        <span class="n">incident_angle</span><span class="p">,</span>
+                        <span class="n">SLD</span><span class="p">,</span>
+                        <span class="n">reflectivity</span><span class="p">,</span>
+                        <span class="n">transmission</span><span class="p">,</span>
+                        <span class="n">q_reflc</span><span class="p">,</span>
+                        <span class="n">qz</span><span class="p">,</span>
+                        <span class="n">Qz</span><span class="p">,</span>
+                        <span class="n">wavelength</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computer the GISAXS pattern from SAXS pattern using DWBA</span>
+<span class="sd">    </span>
+<span class="sd">    See http://gisaxs.com/index.php/DWBA</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SAXS: 2D numpy array</span>
+<span class="sd">          small angle scattering pattern 2D image.</span>
+<span class="sd">    incident_angle: float</span>
+<span class="sd">          Incident angle in degrees.</span>
+<span class="sd">    SLD:  float</span>
+<span class="sd">          Scattering Length Density,</span>
+<span class="sd">          parameter determine critical angle,</span>
+<span class="sd">          usually in scale x1e-6</span>
+<span class="sd">    reflectivity:  1D numpy.array</span>
+<span class="sd">    transmission: 1D numpy.array</span>
+<span class="sd">    q_reflc: 1D numpy.array</span>
+<span class="sd">             q for reflectivity and transmission.</span>
+<span class="sd">    qz: 1D numpy array</span>
+<span class="sd">        q for detector space in vertical direction.</span>
+<span class="sd">    Qz: 1D numpy array</span>
+<span class="sd">        q for reciprocal space of SAXS in vertical direction.</span>
+<span class="sd">    wavelength: float</span>
+<span class="sd">        wavelength of incident X-ray.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    GISAXS pattern: 2D numpy array</span>
+<span class="sd">        GISAXS only, theoritically below critical angle of material no scattering.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">incident_anlge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span>
+    <span class="n">ct_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">wavelength</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">16</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">SLD</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+<span class="c1">#    ct_f is critical angle which calculated from snell law using SLD</span>
+    <span class="n">film_n</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ct_f</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">**.</span><span class="mi">5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ambient_n</span> <span class="o">=</span><span class="mf">1.</span>
+    <span class="n">qz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">qz</span><span class="p">)</span> 
+<span class="c1">#    make sure qz always incline order</span>
+    <span class="n">horizon_qz_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_anlge</span><span class="p">)</span><span class="o">/</span><span class="n">wavelength</span><span class="p">))</span>
+<span class="c1">#   qz position of horizon within GISAXS pattern</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">wavelength</span>
+<span class="c1">#   k0 is precalculate parameter</span>
+<span class="c1">#   q = k0*1/d, d correlate the distance in real space</span>
+    <span class="n">two_theta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">qz</span><span class="p">[</span><span class="n">horizon_qz_index</span><span class="p">:]</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">k0</span><span class="p">)</span>
+<span class="c1">#   two theta angle in rciprocal space, radians</span>
+    <span class="n">alpha_incident_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incident_anlge</span><span class="p">)</span><span class="o">*</span><span class="n">ambient_n</span><span class="o">/</span><span class="n">film_n</span><span class="p">)</span>
+<span class="c1">#   correct incident angle distortion due to refraction</span>
+    <span class="n">r_f</span> <span class="o">=</span> <span class="n">reflectivity</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">k0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha_incident_eff</span><span class="p">)))]</span>
+    
+    <span class="n">t_f</span> <span class="o">=</span> <span class="n">transmission</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">k0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha_incident_eff</span><span class="p">)))]</span>
+        
+    <span class="n">two_theta_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">two_theta</span><span class="o">-</span><span class="n">incident_anlge</span><span class="p">)</span> <span class="o">*</span> \
+                  <span class="n">ambient_n</span><span class="o">/</span><span class="n">film_n</span><span class="p">)</span><span class="o">-</span><span class="n">alpha_incident_eff</span>
+    <span class="n">two_theta_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">two_theta</span><span class="o">-</span><span class="n">incident_anlge</span><span class="p">)</span> <span class="o">*</span> \
+                  <span class="n">ambient_n</span><span class="o">/</span><span class="n">film_n</span><span class="p">)</span><span class="o">+</span><span class="n">alpha_incident_eff</span>
+    <span class="n">qz_r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">two_theta_r</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">wavelength</span>
+    <span class="n">qz_d</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">two_theta_d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">wavelength</span>   
+    <span class="n">qz_f</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">k0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">qz</span><span class="p">[</span><span class="n">horizon_qz_index</span><span class="p">:]</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">k0</span><span class="p">)</span>\
+           <span class="o">-</span><span class="n">incident_anlge</span><span class="p">)</span><span class="o">*</span><span class="n">ambient_n</span><span class="o">/</span><span class="n">film_n</span><span class="p">))</span>
+    
+    <span class="n">reflc_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">qz_f</span><span class="p">,</span>
+                            <span class="n">q_reflc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">qz_f</span><span class="p">))):</span>\
+                            <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">qz_f</span><span class="p">)))],</span> \
+                            <span class="n">reflectivity</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">qz_f</span><span class="p">))):</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">qz_f</span><span class="p">)))])</span>
+    <span class="n">trans_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">qz_f</span><span class="p">,</span>
+                            <span class="n">q_reflc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">qz_f</span><span class="p">))):</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">qz_f</span><span class="p">)))],</span> \
+                            <span class="n">transmission</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">qz_f</span><span class="p">))):</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_reflc</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">qz_f</span><span class="p">)))])</span>
+                        
+<span class="c1">#   im_GISAXS = np.zeros((len(qz_r),np.shape(SAXS)[1]))</span>
+    <span class="n">im_GISAXS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">TT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">TR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">RT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">RR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qz_r</span><span class="p">)):</span>
+        <span class="n">r_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">Qz</span><span class="p">))</span>
+        <span class="n">d_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz_d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">Qz</span><span class="p">))</span>
+        <span class="n">im_GISAXS</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">trans_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">t_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">d_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span><span class="o">+</span>
+        <span class="n">t_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">r_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span><span class="o">+</span>
+        <span class="n">trans_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">r_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">r_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span><span class="o">+</span>
+        <span class="n">r_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">d_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:])</span>
+        <span class="n">TT</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">trans_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">t_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">d_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="n">TR</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">t_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">r_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="n">RT</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">trans_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">r_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">r_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="n">RR</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">r_f</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">reflc_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">SAXS</span><span class="p">[</span><span class="n">d_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span>
+    <span class="k">return</span> <span class="n">im_GISAXS</span></div>
+
+
+<div class="viewcode-block" id="gisaxs_full"><a class="viewcode-back" href="../../usage.html#package_example.converter_saxs2gisaxs.gisaxs_full">[docs]</a><span class="k">def</span> <span class="nf">gisaxs_full</span><span class="p">(</span><span class="n">SAXS</span><span class="p">,</span>
+                <span class="n">GISAXS</span><span class="p">,</span>
+                <span class="n">incident_angle</span><span class="p">,</span>
+                <span class="n">SLD</span><span class="p">,</span>
+                <span class="n">SLDS</span><span class="p">,</span>
+                <span class="n">qz</span><span class="p">,</span>
+                <span class="n">wavelength</span><span class="p">,</span>
+                <span class="n">beamcenter_y</span><span class="p">,</span>
+                <span class="n">detector_distance</span><span class="p">,</span>
+                <span class="n">pixel_size</span><span class="p">,</span>
+                <span class="n">scale_factor</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computer a GISAXS pattern include the GTSAXS pattern；</span>
+<span class="sd">    GTSAXS pattern is SAXS pattern with refraction dsitortion and </span>
+<span class="sd">    intensity of GTSAXS is scale down by scale factor.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SAXS:   2D numpy array;</span>
+<span class="sd">    GISAXS: 2D numpy array;</span>
+<span class="sd">    incident_angle: float</span>
+<span class="sd">            incident angle of X-ray, degrees;</span>
+<span class="sd">    SLD:  float</span>
+<span class="sd">          scattering length density of film;</span>
+<span class="sd">    SLDS: float</span>
+<span class="sd">          scattering length density of substrate;</span>
+<span class="sd">    qz: float</span>
+<span class="sd">        q of vertical detector space; 1/Angstrom;</span>
+<span class="sd">    wavelength: float</span>
+<span class="sd">        wave length of incident X-ray</span>
+<span class="sd">    beamcenter_y: int</span>
+<span class="sd">        beam center at vertical detector space, pixel;</span>
+<span class="sd">    detector_distance: float</span>
+<span class="sd">        sample to detector distance, meter.</span>
+<span class="sd">    pixel_size: float, meter.</span>
+<span class="sd">    scale_factor: int </span>
+<span class="sd">        the factor scale down SAXS to simulate GTSAXS.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GISAXS: 2D numpy array</span>
+<span class="sd">        including GISAXS and GTSAXS</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">SAXS</span><span class="p">))</span>
+    <span class="n">im_full</span><span class="p">[:</span><span class="n">GISAXS</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">GISAXS</span><span class="p">)</span>
+    
+    <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">wavelength</span>
+    <span class="n">ct_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">wavelength</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">16</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">SLD</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="n">ct_si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">wavelength</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">16</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">SLDS</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="n">qz_cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">qz</span><span class="p">)</span>
+    <span class="n">incident_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span>
+<span class="c1">#   theta correlate the pixel position of horizon, below horizon is GTSAXS; above is GISAXS</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">detector_distance</span><span class="o">/</span><span class="p">(</span><span class="n">pixel_size</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    
+<span class="c1">#   refraction correction of qz for GISAXS and GTSAXS had been calculated basing on paper: </span>
+<span class="c1">#   Lu, X. et al., J. of Appl. Cryst.2013.doi: 10.1107/S0021889812047887</span>
+    
+<span class="c1">#   GISAXS qz refraction correction</span>
+    <span class="k">if</span> <span class="n">incident_angle</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ct_f</span><span class="p">):</span>
+        <span class="n">qz_cr</span><span class="p">[:</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">]</span> <span class="o">=</span> <span class="n">k0</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">qz</span><span class="p">[:</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">]</span><span class="o">/</span><span class="n">k0</span> <span class="o">-</span> \
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qz_cr</span><span class="p">[:</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">]</span> <span class="o">=</span> <span class="n">k0</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> \
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">+</span>\
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">qz</span><span class="p">[:</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">]</span><span class="o">/</span><span class="n">k0</span> <span class="o">-</span> \
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span>\
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="c1">#   GTSXAS qz refraction correction</span>
+    <span class="k">if</span> <span class="n">incident_angle</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ct_f</span><span class="p">):</span>
+        <span class="n">qz_cr</span><span class="p">[</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">:]</span> <span class="o">=</span> <span class="n">k0</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">qz</span><span class="p">[</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">:]</span><span class="o">/</span> \
+                                     <span class="n">k0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span>\
+									 <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_si</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>    
+        <span class="n">qz_cr</span><span class="p">[</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">:]</span> <span class="o">=</span> <span class="n">k0</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> \
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">-</span>\
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">qz</span><span class="p">[</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">:]</span> <span class="o">/</span> \
+                                     <span class="n">k0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incident_angle</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span>\
+                                     <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ct_si</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">beamcenter_y</span><span class="o">-</span><span class="n">theta</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">qz</span><span class="p">)):</span>
+        <span class="n">im_full</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">SAXS</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">qz</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">:]</span><span class="o">/</span>\
+                       <span class="n">scale_factor</span>
+    
+    <span class="n">im_full</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">im_full</span><span class="p">)]</span><span class="o">=</span><span class="mf">0.01</span>
+    <span class="k">return</span> <span class="n">im_full</span></div>
+
+
+<div class="viewcode-block" id="convert_saxs2gisaxs"><a class="viewcode-back" href="../../usage.html#package_example.converter_saxs2gisaxs.convert_saxs2gisaxs">[docs]</a><span class="k">def</span> <span class="nf">convert_saxs2gisaxs</span><span class="p">(</span><span class="n">SAXS</span><span class="p">,</span>
+                        <span class="n">detector_distance</span><span class="p">,</span>
+                        <span class="n">wavelength</span><span class="p">,</span>
+                        <span class="n">beamcenter_y</span><span class="p">,</span>
+                        <span class="n">reflectivity</span><span class="p">,</span>
+                        <span class="n">transmission</span><span class="p">,</span> 
+                        <span class="n">q_reflc</span><span class="p">,</span> 
+						<span class="n">SLD</span><span class="p">,</span> 
+                        <span class="n">SLDS</span><span class="p">,</span>
+                        <span class="n">pixel_size</span><span class="p">,</span>
+						<span class="n">incident_angle</span><span class="p">,</span>
+                        <span class="n">scale_factor</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computer a GISAXS pattern include the GTSAXS pattern；</span>
+<span class="sd">    this converter function will calcualte the qz and collibrate the SAXS </span>
+<span class="sd">    for GISAXS</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SAXS:  2D numpy array</span>
+<span class="sd">         Small Angle Xray Scattering pattern</span>
+<span class="sd">    detector_distance :  float</span>
+<span class="sd">         sample to detector distance</span>
+<span class="sd">    wavelength :  float</span>
+<span class="sd">         wave length of incident X-ray</span>
+<span class="sd">    beamcenter_y :  int</span>
+<span class="sd">         beam center at vertical detector space, pixel;</span>
+<span class="sd">    reflectivity :  1D numpy.array</span>
+<span class="sd">         reflectivity coefficient of material</span>
+<span class="sd">    transmission :  1D numpy.array</span>
+<span class="sd">         transmission coefficient of material</span>
+<span class="sd">    q_reflc : 1D numpy array</span>
+<span class="sd">         q for reflectivity and transmission curve;</span>
+<span class="sd">    SLD : float</span>
+<span class="sd">         scattering length density of film</span>
+<span class="sd">    SLDS : float</span>
+<span class="sd">         scattering length density of substrate</span>
+<span class="sd">    pixel_size :  float</span>
+<span class="sd">         actual pixel size of detector, in meter</span>
+<span class="sd">    incident_angle :  float</span>
+<span class="sd">         incident angle of X-ray, degrees</span>
+<span class="sd">    scale_factor :  int</span>
+<span class="sd">         the factor scale down SAXS to simulate GTSAXS</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GISAXS pattern :  2D numpy.array</span>
+<span class="sd">         including GISAXS and correlated GTSAXS</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">SAXS</span>
+    <span class="k">if</span> <span class="n">beamcenter_y</span> <span class="o">&lt;</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>  
+        <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+        <span class="n">beamcenter_y</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">beamcenter_y</span>
+    <span class="n">qz</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">((</span><span class="n">beamcenter_y</span><span class="o">-</span>\
+         <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span>\
+         <span class="n">pixel_size</span><span class="o">/</span><span class="n">detector_distance</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">wavelength</span>
+    <span class="n">im_GISAXS</span>  <span class="o">=</span> <span class="n">gisaxs_construction</span><span class="p">(</span><span class="n">SAXS</span><span class="o">=</span><span class="n">SAXS</span><span class="p">,</span>
+                                     <span class="n">incident_angle</span><span class="o">=</span><span class="n">incident_angle</span><span class="p">,</span>
+                                     <span class="n">SLD</span><span class="o">=</span><span class="n">SLD</span><span class="p">,</span>
+                                     <span class="n">reflectivity</span><span class="o">=</span><span class="n">reflectivity</span><span class="p">,</span>
+                                     <span class="n">transmission</span><span class="o">=</span><span class="n">transmission</span><span class="p">,</span>
+                                     <span class="n">q_reflc</span><span class="o">=</span><span class="n">q_reflc</span><span class="p">,</span>
+                                     <span class="n">qz</span><span class="o">=</span><span class="n">qz</span><span class="p">,</span>
+                                     <span class="n">Qz</span><span class="o">=</span><span class="n">qz</span><span class="p">,</span>
+                                     <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>                            
+    
+    <span class="n">SLDS</span> <span class="o">=</span> <span class="n">SLDS</span>
+    
+    <span class="n">im_full</span> <span class="o">=</span> <span class="n">gisaxs_full</span><span class="p">(</span><span class="n">SAXS</span><span class="o">=</span><span class="n">SAXS</span><span class="p">,</span>
+                          <span class="n">GISAXS</span><span class="o">=</span><span class="n">im_GISAXS</span><span class="p">,</span>
+                          <span class="n">incident_angle</span><span class="o">=</span><span class="n">incident_angle</span><span class="p">,</span>
+                          <span class="n">SLD</span><span class="o">=</span><span class="n">SLD</span><span class="p">,</span>
+                          <span class="n">SLDS</span><span class="o">=</span><span class="n">SLDS</span><span class="p">,</span>
+                          <span class="n">qz</span><span class="o">=</span><span class="n">qz</span><span class="p">,</span>
+                          <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
+                          <span class="n">beamcenter_y</span><span class="o">=</span><span class="n">beamcenter_y</span><span class="p">,</span>
+                          <span class="n">detector_distance</span><span class="o">=</span><span class="n">detector_distance</span><span class="p">,</span>
+                          <span class="n">pixel_size</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">,</span>
+                          <span class="n">scale_factor</span><span class="o">=</span><span class="n">scale_factor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">im_full</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, jiliang liu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.post41+g31c8e7c',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.rawgit.com/choldgraf/sphinx-copybutton/master/_static/copybutton.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

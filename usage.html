@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage &mdash; package_example 0.post41+g31c8e7c documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.rawgit.com/choldgraf/sphinx-copybutton/master/_static/copybutton.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Release History" href="release-history.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> package_example
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.post41+g31c8e7c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">package_example</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Start by importing package_example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">package_example</span>
+</pre></div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="package_example.converter_saxs2gisaxs.gisaxs_construction">
+<code class="descclassname">package_example.converter_saxs2gisaxs.</code><code class="descname">gisaxs_construction</code><span class="sig-paren">(</span><em>SAXS</em>, <em>incident_angle</em>, <em>SLD</em>, <em>reflectivity</em>, <em>transmission</em>, <em>q_reflc</em>, <em>qz</em>, <em>Qz</em>, <em>wavelength</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/package_example/converter_saxs2gisaxs.html#gisaxs_construction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#package_example.converter_saxs2gisaxs.gisaxs_construction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computer the GISAXS pattern from SAXS pattern using DWBA</p>
+<p>See <a class="reference external" href="http://gisaxs.com/index.php/DWBA">http://gisaxs.com/index.php/DWBA</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>SAXS: 2D numpy array</strong></dt>
+<dd><p class="first last">small angle scattering pattern 2D image.</p>
+</dd>
+<dt><strong>incident_angle: float</strong></dt>
+<dd><p class="first last">Incident angle in degrees.</p>
+</dd>
+<dt><strong>SLD:  float</strong></dt>
+<dd><p class="first last">Scattering Length Density,
+parameter determine critical angle,
+usually in scale x1e-6</p>
+</dd>
+<dt><strong>reflectivity:  1D numpy.array</strong></dt>
+<dd></dd>
+<dt><strong>transmission: 1D numpy.array</strong></dt>
+<dd></dd>
+<dt><strong>q_reflc: 1D numpy.array</strong></dt>
+<dd><p class="first last">q for reflectivity and transmission.</p>
+</dd>
+<dt><strong>qz: 1D numpy array</strong></dt>
+<dd><p class="first last">q for detector space in vertical direction.</p>
+</dd>
+<dt><strong>Qz: 1D numpy array</strong></dt>
+<dd><p class="first last">q for reciprocal space of SAXS in vertical direction.</p>
+</dd>
+<dt><strong>wavelength: float</strong></dt>
+<dd><p class="first last">wavelength of incident X-ray.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>GISAXS pattern: 2D numpy array</strong></dt>
+<dd><p class="first last">GISAXS only, theoritically below critical angle of material no scattering.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="package_example.converter_saxs2gisaxs.gisaxs_full">
+<code class="descclassname">package_example.converter_saxs2gisaxs.</code><code class="descname">gisaxs_full</code><span class="sig-paren">(</span><em>SAXS</em>, <em>GISAXS</em>, <em>incident_angle</em>, <em>SLD</em>, <em>SLDS</em>, <em>qz</em>, <em>wavelength</em>, <em>beamcenter_y</em>, <em>detector_distance</em>, <em>pixel_size</em>, <em>scale_factor=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/package_example/converter_saxs2gisaxs.html#gisaxs_full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#package_example.converter_saxs2gisaxs.gisaxs_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computer a GISAXS pattern include the GTSAXS pattern；
+GTSAXS pattern is SAXS pattern with refraction dsitortion and 
+intensity of GTSAXS is scale down by scale factor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>SAXS:   2D numpy array;</strong></dt>
+<dd></dd>
+<dt><strong>GISAXS: 2D numpy array;</strong></dt>
+<dd></dd>
+<dt><strong>incident_angle: float</strong></dt>
+<dd><p class="first last">incident angle of X-ray, degrees;</p>
+</dd>
+<dt><strong>SLD:  float</strong></dt>
+<dd><p class="first last">scattering length density of film;</p>
+</dd>
+<dt><strong>SLDS: float</strong></dt>
+<dd><p class="first last">scattering length density of substrate;</p>
+</dd>
+<dt><strong>qz: float</strong></dt>
+<dd><p class="first last">q of vertical detector space; 1/Angstrom;</p>
+</dd>
+<dt><strong>wavelength: float</strong></dt>
+<dd><p class="first last">wave length of incident X-ray</p>
+</dd>
+<dt><strong>beamcenter_y: int</strong></dt>
+<dd><p class="first last">beam center at vertical detector space, pixel;</p>
+</dd>
+<dt><strong>detector_distance: float</strong></dt>
+<dd><p class="first last">sample to detector distance, meter.</p>
+</dd>
+<dt><strong>pixel_size: float, meter.</strong></dt>
+<dd></dd>
+<dt><strong>scale_factor: int</strong></dt>
+<dd><p class="first last">the factor scale down SAXS to simulate GTSAXS.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>GISAXS: 2D numpy array</strong></dt>
+<dd><p class="first last">including GISAXS and GTSAXS</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="package_example.converter_saxs2gisaxs.convert_saxs2gisaxs">
+<code class="descclassname">package_example.converter_saxs2gisaxs.</code><code class="descname">convert_saxs2gisaxs</code><span class="sig-paren">(</span><em>SAXS</em>, <em>detector_distance</em>, <em>wavelength</em>, <em>beamcenter_y</em>, <em>reflectivity</em>, <em>transmission</em>, <em>q_reflc</em>, <em>SLD</em>, <em>SLDS</em>, <em>pixel_size</em>, <em>incident_angle</em>, <em>scale_factor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/package_example/converter_saxs2gisaxs.html#convert_saxs2gisaxs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#package_example.converter_saxs2gisaxs.convert_saxs2gisaxs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computer a GISAXS pattern include the GTSAXS pattern；
+this converter function will calcualte the qz and collibrate the SAXS 
+for GISAXS</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>SAXS:  2D numpy array</strong></dt>
+<dd><p class="first last">Small Angle Xray Scattering pattern</p>
+</dd>
+<dt><strong>detector_distance</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">sample to detector distance</p>
+</dd>
+<dt><strong>wavelength</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">wave length of incident X-ray</p>
+</dd>
+<dt><strong>beamcenter_y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">beam center at vertical detector space, pixel;</p>
+</dd>
+<dt><strong>reflectivity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">reflectivity coefficient of material</p>
+</dd>
+<dt><strong>transmission</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy.array</span></dt>
+<dd><p class="first last">transmission coefficient of material</p>
+</dd>
+<dt><strong>q_reflc</strong> <span class="classifier-delimiter">:</span> <span class="classifier">1D numpy array</span></dt>
+<dd><p class="first last">q for reflectivity and transmission curve;</p>
+</dd>
+<dt><strong>SLD</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">scattering length density of film</p>
+</dd>
+<dt><strong>SLDS</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">scattering length density of substrate</p>
+</dd>
+<dt><strong>pixel_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">actual pixel size of detector, in meter</p>
+</dd>
+<dt><strong>incident_angle</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">incident angle of X-ray, degrees</p>
+</dd>
+<dt><strong>scale_factor</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">the factor scale down SAXS to simulate GTSAXS</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>GISAXS pattern</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2D numpy.array</span></dt>
+<dd><p class="first last">including GISAXS and correlated GTSAXS</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="release-history.html" class="btn btn-neutral float-right" title="Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, jiliang liu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.post41+g31c8e7c',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.rawgit.com/choldgraf/sphinx-copybutton/master/_static/copybutton.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

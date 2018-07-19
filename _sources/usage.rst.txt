@@ -1,0 +1,17 @@
+=====
+Usage
+=====
+
+Start by importing package_example.
+
+.. code-block:: python
+
+    import package_example
+    
+    
+Functions
+--------------------------
+.. autofunction:: package_example.converter_saxs2gisaxs.gisaxs_construction
+.. autofunction:: package_example.converter_saxs2gisaxs.gisaxs_full
+.. autofunction:: package_example.converter_saxs2gisaxs.convert_saxs2gisaxs
+
