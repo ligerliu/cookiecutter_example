@@ -15,7 +15,7 @@ install:
 env:
 global:
   # Doctr deploy key for ligerliu/package_example/
-  - secure: "<REDACTED>"
+  - secure: "NiZjPj4kY6zE1PFCqwxKu1Mwsn2+WC+ANzYnbkS8HvPUQBJgTlkN9RaC0QJ1JOkZr8oErfj7EIQAvfas0YYnbvVibjtFuUSiluFDh05pXzG8U8C/NTnyhT5OREzRbN4peKIRayv2IE0vaWAKDo5grAQSk1IAd1Tn3Ut2bB4wSsUjP2TnytCUzHLaq3nhC6xSjqBbZvGUrzC0xEvk7/GXr9q8cr1LvG+dhB3cUm0CrP/Rv8sZ9h9FEMRht1epHgdm7EIYb/JeTgKkVcRrz9gM/qkJgilRK9nk7N7r24fyrd9aZHQmS02pAu5VJJJigirncid8kYZD5CkpZhcERNSs4dEbJQiIbeAMgoBzLI0BMEp4m24otYKNVgBTvvdpyCCDlb+3coUykU+m3hxteFT5f4jL8098DsHFELYUpuP/ZkP5QUvodjxYSfdUFGcrBNhdpPmmel+Mnpi+F4/pCHGVoaLLNQZ8av7MSTZqeZc2fcxypATgqRSOGEIZCEi9k3Hw+eGse6PFyuqFL2b+YE6SknR3lzh12+VY5BGEiram0AJxzu0TqrXHm17Db5yMFV2t5Tv9YlqnyBT+To3kYsbCU6ee0nb4EjGd3VCBWZxwHOgWaZ7B2f62dC3NN6TPOgQD6wYwaj7Q+Qyp6rZVLuomWGf2u6TZ2YZiZjTmWJik+4I="
   
 script:
   - coverage run -m pytest  # Run the tests and check for test coverage.
