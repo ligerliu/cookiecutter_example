@@ -19,4 +19,4 @@ script:
   - flake8 --max-line-length=315  # Enforce code style (but relax line length limit a bit).
   - make -C docs html  # Build the documentation.
   - pip install doctr
-  - dotr deploy --built-docs docs/build/html .
+  - dotr deploy --built-docs /Users/jiliangliu/package_example/docs/build/html .
