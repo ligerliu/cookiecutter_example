@@ -49,11 +49,12 @@ Example
    ax[1].imshow(np.log(gisaxs))
 
 Plots
-----------------------------
+------------------------
 .. plot::
    
+      
    import numpy as np
-   import os
+   import os 
    
    path = '/Users/jiliangliu/Downloads/for_jl/ori/'
    os.chdir(path)
