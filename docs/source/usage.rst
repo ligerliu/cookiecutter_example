@@ -21,10 +21,13 @@ Example
    
    import numpy as np
    from pkg_resources import resource_filename
-   import package_example
+   import os
    
-   filename = resource_filename(__name__,'example_data/example_data.npz') 
-   a = np.load(filename)
+   os.chdir('/Users/jiliangliu')
+   
+   filename = resource_filename(__name__,'package_example') 
+   path = filename+'/example_data/example_data'
+   a = np.load(path)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']
@@ -48,16 +51,19 @@ Example
    ax[0].imshow(np.log(saxs))
    ax[1].imshow(np.log(gisaxs))
 
+
 Plots
-------------------------
-.. plot:: 
+--------------------------
+.. plot::
    
    import numpy as np
    from pkg_resources import resource_filename
-   import package_example
+   import os
    
-   filename = resource_filename(__name__,'example_data/example_data.npz')
-   a = np.load(filename)
+   os.chdir('/Users/jiliangliu')
+   filename = resource_filename(__name__,'package_example')
+   path = filename + '/example_data/example_data.npz' 
+   a = np.load(path)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
    transmission = a['example_data'].item()['transmission']
@@ -76,14 +82,8 @@ Plots
    gisaxs = convert_saxs2gisaxs(saxs, detector_distance, wavelength,
             beamcenter_y, reflectivity, transmission, q_reflc, SLD,
             SLDS, pixel_size,incident_angle,scale_factor)
-   
    import matplotlib.pyplot as plt
-   
-   fig,ax = plt.subplots(1,2,figsize = (6,3))
-   ax[0].plot(q_reflc,np.log(reflectivity))
-   ax[1].plot(q_reflc,transmission)
-   
    fig,ax = plt.subplots(1,2)
-   ax[0].imshow(np.log(saxs),vmin=1,vmax=12)
-   ax[1].imshow(np.log(gisaxs),vmin=1,vmax=12)
+   ax[0].imshow(np.log(saxs))
+   ax[1].imshow(np.log(gisaxs))
 
