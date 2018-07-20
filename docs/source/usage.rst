@@ -21,12 +21,7 @@ Example
    
    import numpy as np
    from pkg_resources import resource_filename
-   import os
-   
-   os.chdir('/Users/jiliangliu')
-   
-   filename = resource_filename(__name__,'package_example') 
-   path = filename+'/example_data/example_data'
+   path = resource_filename('pacakge_example','example_data/example_data.npz')
    a = np.load(path)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
@@ -58,11 +53,12 @@ Plots
    
    import numpy as np
    from pkg_resources import resource_filename
-   import os
+   #import os
    
-   os.chdir('/Users/jiliangliu')
-   filename = resource_filename(__name__,'package_example')
-   path = filename + '/example_data/example_data.npz' 
+   #os.chdir('/Users/jiliangliu')
+   #filename = resource_filename(__name__,'package_example')
+   #path = filename + '/example_data/example_data.npz' 
+   path = resource_filename('package_example','example_data/example_data.npz')
    a = np.load(path)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
