@@ -21,7 +21,7 @@ Example
    
    import numpy as np
    from pkg_resources import resource_filename
-   path = resource_filename('pacakge_example','example_data/example_data.npz')
+   path = resource_filename('package_example','example_data/example_data.npz')
    a = np.load(path)
    saxs = a['example_data'].item()['saxs']
    reflectivity = a['example_data'].item()['reflectivity']
